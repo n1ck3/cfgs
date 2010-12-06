@@ -1,0 +1,219 @@
+" Daethorians vim settings
+" Once upon a time based on MetaCosms vimrc (http://www.vi-improved.org/vimrc.php)
+
+" Basics {
+    set nocompatible " get out of horrible vi-compatible mode
+    set background=dark " we are using a dark background syntax on " syntax highlighting on
+    syntax enable
+" }
+" General {
+    set history=100 " How many lines of history to remember
+    set iskeyword+=_,$,@,%,# " none of these should be word dividers, so make them not be
+    set nostartofline " leave my cursor where it was
+    set backspace=indent,eol,start
+    set gdefault " always replace everything when substituting
+" }
+" Filetypes {
+    au Filetype python set foldmethod=indent expandtab
+    au Filetype html, htmldjango set foldmethod=indent noexpandtab
+" }
+" Files/Backups (XDG style) {
+    set viminfo='100,<50,s10,h,!,n~/.cache/vim/viminfo
+    set backup " make backup file
+    set backupdir=~/.cache/vim/backup " where to put backup file
+    set directory=~/.cache/vim/tmp " directory is the directory for temp file
+" }
+" Vim UI {
+    set showcmd " show the command being typed
+    set wildmenu " turn on wild menu
+    set wildmode=list:longest " turn on wild menu in special format (long format)
+    set wildignore=*.o,*.obj,*.bak,*.exe,*.pyc,*.swp,*.jpg,*.gif,*.png " ignore some formats
+    set ruler " Always show current positions along the bottom
+    set cmdheight=1 " the command bar is 1 high
+    set number " turn on line numbers
+    set lazyredraw " do not redraw while running macros (much faster)
+    set noerrorbells " don't make noise
+    set laststatus=2 " always have the statusline
+    set statusline=%<%f\:%l\,%c\ %m\ %=\ %#Error#%{SyntasticStatuslineFlag()}%*\ %r%h%w%y\ %l\/%L\ %P
+" }
+" Visual Cues {
+    set showmatch " show matching brackets
+    set hlsearch " do not highlight searched for phrases
+    set incsearch " BUT do highlight as you type you search phrase
+    set scrolloff=5 " Keep 5 lines (top/bottom) for scope
+    set sidescrolloff=5 " Keep 5 lines at the side
+    set novisualbell " don't blink
+    set list " Show whitespace characters
+    set listchars=trail:-,tab:\>\ 
+    augroup vimrc_autocmds
+        autocmd BufRead * highlight OverLength ctermbg=88 guibg=#751719
+        autocmd BufRead * match OverLength /\%80v.*/
+    augroup END
+" }
+" Indent Related {
+    set softtabstop=4 " unify
+    set shiftwidth=4 " unify
+    set tabstop=4 " real tabs should be 4, but they will show with set list on
+    set copyindent " follow the conventions laid before us
+    set noexpandtab " do not use spaces
+    filetype plugin indent on " load filetype plugins and indent settings
+" }
+" Text Formatting/Layout {
+    set formatoptions=tcrq " See Help (complex)
+    set shiftround " when at 3 spaces, and I hit > ... go to 4, not 5
+    set nowrap " do not wrap line
+    set preserveindent " but above all -- follow the conventions laid before us
+    set ignorecase " case insensitive by default
+    set smartcase " if there are caps, go case-sensitive
+    set completeopt=menu,longest,preview " improve the way autocomplete works
+" }
+" Folding {
+    set foldenable " Turn on folding
+    set foldmarker={,} " Fold C style code (only use this as default if you use a high foldlevel)
+    set foldcolumn=1 " Give 1 column for fold markers
+    set foldmethod=marker " Fold on the marker
+    set foldlevel=0 " Open files with folds closed
+    set foldopen=undo,search,jump,hor,tag,mark " open folds when you do stuff
+    function! SimpleFoldText() " {
+        return getline(v:foldstart).' '
+    endfunction " }
+    set foldtext=SimpleFoldText() " Custom fold text
+" }
+" Colorschemes {
+    let g:CSApprox_verbose_level = 0 " Silence for CSApprox. Otherwise prints warning in low color terminals
+    colorscheme desert
+" }
+" Custom functions {
+    function! ScrolloffToggle()
+        if &scrolloff == 5
+            set scrolloff=0
+            set sidescrolloff=0
+            echo 'Scrolloff disabled'
+        else
+            set scrolloff=5
+            set sidescrolloff=5
+            echo 'Scrolloff enabled'
+        endif
+    endfunction
+    function! WrapToggle()
+        if &wrap == 0
+            set nolist wrap linebreak
+            echo 'Wrap enabled'
+        else
+            set list nowrap nolinebreak
+            echo 'Wrap disabled'
+        endif
+    endfunction
+    function! ColorschemeToggle()
+        if g:colors_name == 'zenburn'
+            colorscheme desert
+        else
+            colorscheme zenburn
+        endif
+    endfunction
+    function! ColorToggle()
+        if &t_Co == 256
+            let &t_Co = 16
+            echo '16 colors disabled'
+        else
+            let &t_Co = 256
+            echo '256 colors disabled'
+        endif
+    endfunction
+
+    function! WhiteSpaceToggle()
+        if &expandtab == 0
+            set expandtab
+            try
+                :%s/\t/    /
+            catch /E486:/
+                echo ''
+            endtry
+            echo "WhiteSpace is tabs"
+        else
+            set noexpandtab
+            try
+                :%s/    /\t/
+            catch /E486:/
+                echo ''
+            endtry
+            echo "WhiteSpace is spaces"
+        endif
+    endfunction
+
+    function! RemoveTrailingWhiteSpace()
+        try
+            :%s/\s\+$//
+            echo "WhiteSpace can haz cheeseburger."
+        catch /E486:/
+            echo 'No trailing whitespace to remove'
+        endtry
+    endfunction
+" }
+" Custom mappings {
+    nmap ,v :source $MYVIMRC<cr>
+    nmap ,V :tabe $MYVIMRC<cr>
+    nmap ,z :tabe ~/.vim/colors/zenburn.vim<cr>
+    nmap ,t :NERDTree<cr>
+    nmap ,T :NERDTreeMirror<cr>
+    nmap ,r ggg?G " ROT13 <3
+    nmap ,x :!xclip %<cr>
+    nmap ,w :call WrapToggle()<cr>
+    nmap ,s :call ScrolloffToggle()<cr>
+    nmap ,cs :call ColorschemeToggle()<cr>
+
+    nmap gyd ?def <cr>/):$<cr>o""""""<cr><esc>k2la
+
+    " Better tabs for the hands
+    " Real men only use z[HL] anyway
+    nmap zh gT
+    nmap zl gt
+
+    " I hate this one
+    nmap K k
+
+    " Whitspace stuffzz"
+    nmap <silent> ,wr mw:call RemoveTrailingWhiteSpace()<cr>´w
+    nmap <silent> ,wt mt:call WhiteSpaceToggle()<cr>`t
+
+    " Django stuffzz"
+    nmap ,db o{% block <++> %}<cr>{% endblock %}<esc>k <C-j>
+    nmap ,dv o{{ <++> }}<esc>k <C-j>
+    nmap ,di o{% if <++> %}<cr>{% endif %}<esc>kk <C-j>
+    nmap ,df o{% for <++> in <++> %}<cr>{% endfor %}<esc>kkk <C-j>
+    nmap ,dt i{%  %}<esc>hhi
+
+    "  CSS Stuffzz"
+    nmap ,bb oborder: 1px solid black;
+    nmap ,bl oborder: 1px solid lime;
+    nmap ,br oborder: 1px solid red;
+
+    " Javascript stuffzz"
+    nmap ,js o<script type="text/javascript"><cr><++><cr></script><esc>k<C-j>
+
+    "  Turn on or off highlight too long rows"
+    nmap ,h<backspace> :hi clear OverLength<cr>
+    nmap ,h<space> :hi OverLength guibg=#751719<cr>
+
+    "  Get rid of bad habits"
+    noremap <Up> <NOP>
+    noremap <Down> <NOP>
+    noremap <Left> <NOP>
+    noremap <Right> <NOP>
+    "inoremap <Up> <NOP>
+    "inoremap <Down> <NOP>
+    "inoremap <Left> <NOP>
+    "inoremap <Right> <NOP>
+
+    "  Misc Stuffz"
+    nmap <space> /
+    nmap ,<space> /\('.\{-}'\\|".\{-}"\)<cr>
+    nmap ,<backspace> :nohls<cr>
+
+    "  Navigation"
+    nmap <C-h> <C-w>h
+    nmap <C-j> <C-w>j
+    nmap <C-k> <C-w>k
+    nmap <C-l> <C-w>l
+" }
+"vim: sw=4

@@ -1,0 +1,564 @@
+# n1kc3's zshrc
+
+# Loading and setting {{{
+    setopt extendedglob
+    umask 022
+    bindkey -e
+
+    autoload colors zsh/terminfo # Colors!
+    autoload -Uz vcs_info # git and svn integration
+
+    autoload -Uz url-quote-magic # URL escaping
+    zle -N self-insert url-quote-magic
+# }}}
+# Variables {{{
+    export HOMEBIN=~/.local/bin
+    export PATH=/usr/local/mysql/bin/:$PATH
+    export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+    export MANPATH=/opt/local/share/man:$MANPATH
+
+    # If $HOMEBIN is not in $PATH, add it, but only once.
+    if ! [[ $PATH =~ "$HOMEBIN" ]] ; then
+        export PATH=$HOMEBIN:$PATH
+    fi
+
+    # The basics
+    export EDITOR="vim"
+    export VISUAL="vim"
+    export MAIL="$HOME/mail"
+    export LOGS="$HOME/.logs"
+
+    # Prompt variables
+    export ALIAS='nicke'
+    export TCOLORS=$(echotc Co)
+    export HASTMUX=$(if which tmux &> /dev/null ; then echo true ; else echo false ; fi)
+    export PMODE=2
+
+    if [ $TERM = "linux" ]; then
+        export PMODE=1 # Console
+    elif [ $TERM = "xterm" ] && false ; then
+        export PMODE=0 # Mobile connection
+    fi
+
+    # Automatically change to CVS prompt if in a CVS dir
+    export PKEEP=false
+    export POLD=$PMODE
+
+    # Kill root after three minutes
+    if [ "$UID" = 0 ] && false ; then
+        TMOUT=180
+    fi
+# }}}
+# History {{{
+    HISTFILE="$LOGS/zsh.history.log"
+    HISTSIZE=100000
+    SAVEHIST=100000
+
+    mkdir $LOGS &> /dev/null
+# }}}
+# Completion {{{
+    zstyle :compinstall filename '~/.zshrc'
+
+    autoload -Uz compinit
+    compinit
+
+    # allow approximate matching
+    zstyle ':completion:*' completer _complete _match _approximate
+    zstyle ':completion:*:match:*' original only
+    zstyle ':completion:*:approximate:*' max-errors 1 numeric
+    zstyle ':completion:*:descriptions' format "- %d -"
+    zstyle ':completion:*:corrections' format "- %d - (errors %e})"
+    zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*:manuals' separate-sections true
+    zstyle ':completion:*:manuals.(^1*)' insert-sections true
+    zstyle ':completion:*' menu select
+    zstyle ':completion:*' verbose yes
+    zstyle ':completion::complete:*' use-cache 1
+
+    # tab completion for PID :D
+    zstyle ':completion:*:*:kill:*' menu yes select
+    zstyle ':completion:*:kill:*' force-list always
+
+    # Make cd not select parent dir
+    zstyle ':completion:*:cd:*' ignore-parents parent pwd
+
+# }}}
+
+# cope {{{
+    cope="/usr/share/perl5/site_perl/5.10.1/auto/share/dist/Cope"
+
+    if [ -d $cope ] ; then
+        ls="$cope/ls"
+        for i in `ls $cope`; do
+            if which $i &> /dev/null ; then
+                alias $i="$cope/$i"
+            fi
+        done
+    else
+        ls='ls'
+    fi
+# }}}
+# Shortening {{{
+    alias grep='grep --color=auto'
+    alias vim='vim -p'
+    alias t='todo'
+    alias tt='todo +children'
+    alias dm='dmesg'
+    alias fm='fetchmail'
+    alias py='python'
+    alias pl='perl'
+    alias am='alsamixer'
+    alias xm='setxkbmap se && xset r rate 330 45 && xmodmap ~/.Xmodmap'
+    alias lock='vlock -n'
+    alias bell='echo -en "\007"'
+    alias rsync='time rsync'
+    alias cdm='cd ~/dev/django/django-mancx'
+    alias cda='cd ~/dev/django/auriga'
+    alias par='ssh root@pepper -t /etc/init.d/apache2 restart'
+    alias gur='gu && dr'
+# }}}
+# LOLCODE {{{
+    lolz()
+    {
+        lns=$(grep -n "lolzz" ~/.zshrc)
+        num=$(echo $lns | grep -Eo '[[:digit:]]+')
+        h=$(echo $num | head -n 1)
+        b=$(echo $num | tail -n 1)
+        (( t = b - h - 1  ))
+        head -n $b ~/.zshrc|tail -n $t|grep -E "alias[[:space:]]"
+    }
+    # BEGIN lolzz
+    alias wtf='dmesg'
+    alias onoz='cat /var/log/errors.log'
+    alias rtfm='man'
+
+    alias visible='echo'
+    alias invisible='cat'
+    alias moar='more'
+
+    alias icanhas='mkdir'
+    alias donotwant='rm'
+    alias dowant='cp'
+    alias gtfo='exit'
+
+    alias hai='cd'
+    alias plz='pwd'
+
+    alias inur='locate'
+
+    alias nomz='ps -aux'
+    alias nomnom='killall'
+
+    alias cya='reboot'
+    alias kthxbai='halt'
+    # END lolzz
+# }}}
+
+# List most used commands {{{
+    lscmd() {
+        if [ -n "$1" ] ; then
+            c=$1
+        else
+            c=25
+        fi
+
+        cat $LOGS/zsh.history.log |
+        perl -pe 's/^: [0-9]+:[0-9]+;\s*//' |
+        sort |
+        uniq -c |
+        sort -n -k1 |
+        tail -$c |
+        tac
+    }
+# }}}
+
+# Extendning {{{
+    cl() { cd $1 && ls }
+    cll() { cd $1 && ll }
+    clal() { cd $1 && lal }
+    psg() {
+        ps -ef | grep -i $1 | grep -Ev '(grep)' | grep -i $1
+    }
+# }}}
+# ls and files {{{
+    ls="$ls -G"
+    alias ls="$ls"
+    alias lc="$ls --color=never"
+    alias ll="$ls -l"
+    alias la="$ls -a"
+    alias lal="$ls -al"
+    alias lla="$ls -Al"
+
+    alias lsd="$ls -d *(-/N)"           # list visible directories
+    alias lsf="$ls *(-.N)"              # list visible files
+
+    alias la="$ls -A"                   # list all files/directories
+    alias lad="$ls -d *(-/DN)"          # list all directories
+    alias laf="$ls -A *(-.DN)"          # list all files
+    alias llad="$ls -lhd *(-/DN)"       # list details of all directories
+    alias llaf="$ls -lhA *(-.DN)"       # list details of all files
+    alias lld="$ls -lhd *(-/N)"         # list details of visible directories
+    alias llf="$ls -lh *(-.N)"          # list details of visible files
+    alias lh="$ls -d .*"                # list hidden files/directories
+    alias lhd="$ls -d .*(-/N)"          # list hidden directories
+    alias lhf="$ls .*(-.N)"             # list hidden files
+    alias llh="$ls -lhd .*"             # list details of hidden files/directories
+    alias llhd="$ls -lhd .*(-/N)"       # list details of hidden directories
+    alias llhf="$ls -lh .*(-.N)"        # list details of hidden files
+
+    alias le="$ls -d *(-/DN^F)"         # list all empty directories
+    alias ler="$ls -d **/*(-/DN^F)"     # list all empty directories recursively
+    alias lle="$ls -ld *(-/DN^F)"       # list details of all empty directories
+    alias ller="$ls -lhd **/*(-/DN^F)"  # list details of all empty directories recursively
+
+    swap() { # Swap name of $1 and $2
+        if [ -f $1 ] ; then
+            if [ -f $2 ] ; then
+                mv $1 $1.swapcopy;
+                mv $2 $1;
+                mv $1.swapcopy $2;
+            else
+                echo "'$2' is not a valid file!"
+            fi
+        else
+            echo "'$1' is not a valid file!"
+        fi
+    }
+    mk() {
+        mkdir $* && cd $1
+    }
+# }}}
+# Dotdot {{{
+    alias '..'='cd ..'
+    alias -g ...='../..'
+    alias -g ....='../../..'
+    alias -g .....='../../../..'
+# }}}
+# File finding {{{
+    gg() { grep "$*" * -RIins }
+    ggl() { grep "$*" * -RlIis }
+    f() { # find a file
+        find 2>/dev/null | grep -is "$1"
+    }
+    fc() { # search content
+        if [ $# -eq 0 ]; then
+            echo "findcontent: No arguments entered."; return 1
+        else
+            # "{.[a-zA-Z],}*" instead of "." makes the output cleaner
+            find {.[a-zA-Z],}* -type f 2>/dev/null | xargs grep -is --color=always -n "$@"
+        fi
+    }
+    fd() { # specify where find should look
+        find "$1" 2>/dev/null | grep -is "$2"
+    }
+    cdf () { # cd to where file is found
+        cd "$(dirname "$(locate -i "$*" | head -n 1)")"
+    }
+    grab() { # change mode and users of files to safe default
+        chmod -R u=rwX,go=rX "$@"
+        chown -R ${USER}:users "$@"
+    }
+    sgrab() {
+        sudo chmod -R u=rwX,go=rX "$@"
+        sudo chown -R ${USER}:users "$@"
+    }
+    wgrab() { # change mode and users of files to warez
+        sudo chmod -R 775 "$@"
+        sudo chown -R root:warez "$@"
+    }
+# }}}
+# Global aliases {{{
+    alias -g G="| grep -i"
+    alias -g M="| most"
+    alias -g X="| xargs"
+    alias -g H="| head"
+    alias -g T="| tail"
+    alias -g S="| sort"
+    alias -g SU='| sort -u'
+    alias -g SN='| sort -n'
+    alias -g SNR='| sort -nr'
+    alias -g W="| wc -l"
+    alias -g E="&| exit"
+    alias -g N="&> /dev/null"
+    alias -g 1N="1> /dev/null"
+    alias -g 2N="2> /dev/null"
+# }}}
+# Django {{{
+    alias dm='python manage.py'
+    alias dr='dm runserver'
+    alias ds='echo "no" | dm syncdb'
+    alias dv='dm validate'
+    alias dss='dm shell'
+
+    # Dangerous Aliases
+    alias ddb="grep DB_NAME settings_local.py | grep -Eo \"'.+'\" | tr -d \"'\""
+    alias dsh='for db in `mysql -s -s -e "show tables in $(ddb)"`; do mysql -e "drop table $(ddb).$db"; done; ds'
+    alias dshr='dsh && dr'
+# }}}
+# ssh {{{
+    alias rpp='ssh root@pepper'
+    alias gpp='ssh git@pepper'
+# }}}
+# Terminal multiplexing {{{
+    if which screen &> /dev/null ; then
+        alias sr='screen -r'
+        alias sw='screen -wipe'
+    fi
+
+    if which tmux &> /dev/null ; then
+        alias ta='tmux attach'
+        alias td='tmux detach'
+        alias tr='td && ta'
+    fi
+# }}}
+# Revision handling {{{
+    if which svn &> /dev/null ; then
+        alias sp='svn up' # su is... yeah.
+        alias sc='svn ci -m ""'
+        alias rmsvn='find . -name "*.svn" -type d | xargs rm -rv'
+    fi
+    if which git &> /dev/null ; then
+        alias gc='git commit -a'
+        alias gb='git branch'
+        alias go='git checkout'
+        alias gd='git diff'
+        alias gp='git push'
+        alias gu='git pull' # git update...-ish.
+        alias gU='gu && git submodule update'
+        alias gs='git status'
+        alias gl='git log'
+        alias gll='gl --pretty=oneline'
+        alias ga='git add'
+        alias gC='gc && gp'
+        alias grh='git reset --hard'
+
+        alias gt='git stash'
+        alias gtl='gt list'
+        alias gts='gt save'
+        alias gta='gt apply'
+        alias gtp='gt pop'
+        alias gtb='gt branch'
+        alias gth='gt show'
+        alias gic=t'gt clear'
+
+        # Setup default master options
+        alias gm='git config branch.master.remote origin &&
+                git config branch.master.merge refs/heads/master'
+        alias gau='git update-index --assume-unchanged'
+    fi
+
+# }}}
+# MPD {{{
+    if which mpd &> /dev/null ; then
+        export MPD_HOST=localhost
+        export MPD_PORT=6600
+
+        alias npc='mpc --format "%position%) %artist% #[%album%#] - %title%"' # Now playing
+        alias mps='npc toggle' # Stop
+        alias mpl='npc playlist'
+        alias mpg='mpcext -s'
+        alias mpag='mpcext -S' # grep all
+        alias mpa='mpc add'
+        alias mpx='mpc clear'
+        alias mpll='mpc load' # Playlist load
+        alias mpls='mpx && mpll' # Playlist switch
+        alias mpgs='mpcext -sw' # grep switch
+        alias mpp='npc play'
+        alias mpq='mpcext -q' # Queue
+        alias mpr='npc random'
+    fi
+# }}}
+# Mounting {{{
+    # USB, yeah
+    alias mmu='mount /mnt/usb'
+    alias muu='umount /mnt/usb'
+
+    # Warez
+    alias mmw='sshfs ninjaloot.se:/warez /mnt/warez -o allow_other'
+    alias muw='fusermount -u /mnt/warez'
+
+    # sshfs home
+    alias mmn='sshfs ninjaloot.se: ~/ssh/ninjaloot'
+    alias mun='fusermount -u ~/ssh/ninjaloot'
+
+    alias muu='sudo umount /mnt/usb'
+    alias muw='fusermount -u /mnt/warez'
+    alias mun='fusermount -u ~/ssh/ninjaloot'
+    alias muf='sudo umount -l /mnt/warez && sudo umount -l ~/ssh/ninjaloot'
+# }}}
+# Failsafe! :D {{{
+    fail() {
+        if which figlet &> /dev/null && [ $PMODE != 0 ]; then
+            # If figlet exists and we are not on a mobile connection, doit
+            figlet :@ && echo
+        else
+            # Print red angry text
+            echo -e "\n\033[1;31m   YOU'RE DOING IT WRONG! :@\033[0m\n"
+        fi
+    }
+
+    alias sl='fail && ls'
+    alias ös='fail && ls'
+    alias lös='fail && ls'
+    alias xs='fail && cd'
+    alias vf='fail && cd'
+    alias vom='fail && vim'
+    alias bim='fail && vim'
+    alias shitdown='fail && shutdown' # :D
+# }}}
+# Configuration and sourcing {{{
+    # Easy editing. \o/
+    alias a='vim ~/.config/awesome/rc.lua'
+    alias v="vim ~/.vimrc"
+    alias z="vim ~/.zshrc"
+
+    # Alias to the hard paths of configs
+    alias -g zrc='~/.zshrc'
+
+    # Sourcing
+    alias aa='awesome -k'
+    alias zz="source zrc"
+
+    # The .config directory
+    alias cdc='cd ~/.config'
+    alias cdv='cd ~/.config/vim'
+    alias uc="cd ~/.config && git pull origin master && cd -" # Update config
+
+    # Project directories
+    alias cdr='cd ~/git/rls'
+    alias cdn='cd ~/git/ndev'
+
+    # Also useful during configuration
+    alias cc='grep -Ev "^\s*(#|$)"' # Print a file without comments
+
+    # Colorscheme printer
+    c() {
+        T='HaX'   # The test text
+        echo -e "\n                 40m     41m     42m     43m     44m     45m     46m     47m";
+
+        for FGs in '    m' '   1m' '  30m' '1;30m' '  31m' '1;31m' '  32m' \
+            '1;32m' '  33m' '1;33m' '  34m' '1;34m' '  35m' '1;35m' \
+            '  36m' '1;36m' '  37m' '1;37m';
+        do
+            FG=${FGs// /}
+            echo -en " $FGs \033[$FG  $T  "
+            for BG in 40m 41m 42m 43m 44m 45m 46m 47m;
+                do echo -en "$EINS \033[$FG\033[$BG  $T  \033[0m";
+            done
+            echo;
+        done
+    }
+    C() {
+        for i in {16..255}; do
+            echo -en "\e[38;5;${i}mColor $i\t"
+            [ $((++j%6)) -eq 0 ] && echo
+        done
+    }
+# }}}
+# File installation {{{
+    ins() { # Install a file into ~/.bin
+        mkdir $HOMEBIN &> /dev/null
+        f=$(readlink -f $1)
+        if [ -n "$2" ] ; then
+            ln -s $f $HOMEBIN/$2
+        else
+            ln -s $f $HOMEBIN/$(basename $1)
+        fi
+    }
+# }}}
+# Prompt {{{
+    # CVS integration
+    setopt prompt_subst
+    zstyle ':vcs_info:*' enable git svn
+    zstyle ':vcs_info:*' get-revision true
+    zstyle ':vcs_info:*' check-for-changes true
+    zstyle ':vcs_info:*' unstagedstr "%F{red}"
+
+    # Boldings break since %b is a special escape here. Bold is set
+    # during print
+    zstyle ':vcs_info:*' formats "%F{black}├─[%F{yellow}%s%F{black}:%F{green}%r%F{black}]-[%F{green}%u%b%F{black}]"
+    zstyle ':vcs_info:(svn):*' branchformat '%b'
+
+    p() {
+        if [[ $1 =~ "true" ]] || [[ $1 =~ "false" ]] ; then
+            export PKEEP=$1
+        else
+            export PMODE=$1
+        fi
+    }
+    alias pt='p true'
+    alias pf='p false'
+    alias p0='p 0'
+    alias p1='p 1'
+    alias p2='p 2'
+    alias p3='p 3'
+    chpwd() {
+        if which todo &> /dev/null ; then todo ; fi
+    }
+    precmd () {
+        if [ $TERM != "linux" ] ; then
+            print -Pn "\e]0;%n@%m: %~\a"
+
+            # Add svn?
+            if [[ $PWD =~ "git/" ]] || [ -d "$PWD/.git" ] ; then
+                if ! $PKEEP && [ $PMODE != 3 ] ; then
+                    export POLD=$PMODE
+                    export PMODE=3
+                fi
+            fi
+        fi
+
+        if [ $PMODE = 3 ] ; then
+            vcs_info
+
+            # If the message is empty, we are no longer in the CVS.
+            if [ -z "${vcs_info_msg_0_}" ] ; then
+                export PMODE=$POLD
+            fi
+        fi
+        prompt
+    }
+
+    # Set prompt
+    prompt() {
+        if [ $PMODE -ge 2 ] ; then
+            if [ $USER != $ALIAS ] ; then
+                u="%n@%m"
+            else
+                u="%m"
+            fi
+            if $HASTMUX && [ $TERM != 'screen-256color' ] ; then
+                local dc=red
+            else
+                local dc=blue
+            fi
+
+            if [ -d $MAIL ] ; then
+                local mc=$(find $MAIL | grep new/ | wc -l)
+                if [ $mc -gt 0 ] ; then
+                    if [ $TCOLORS = 256 ] ; then
+                        local c=202
+                    else
+                        local c=red
+                    fi
+                    local m="─[%F{$c}${mc}M%F{black}]"
+                fi
+            fi
+
+            local e='%(?..─[%F{red}$(bell)%?%F{black}])' # Errorcodes
+            local j='%(1j.─[%F{yellow}%j%F{black}].)' # Jobs
+
+            local r1="%B%F{black}┌─[%(#.%F{red}%m.%F{green}$u)%F{black}]─[%F{$dc}%~%F{black}]%b"
+            local r2="%B%F{black}└${e}${j}${m}─[%F{cyan}%D{%H:%M}%F{black}]>%f%b "
+        fi
+
+        case $PMODE in
+            0) ; PROMPT="%# "; ;;
+            1) ; PROMPT="%B%(#.%F{1}%m.%F{2}%n@%m) %F{4}%~ %#%b%f " ; ;;
+            2) ; PROMPT=$(print "$r1\n$r2") ; ;;
+            3) ; PROMPT=$(print "$r1\n%B${vcs_info_msg_0_}%b\n$r2")
+        esac
+    }
+# }}}
+# vim: ft=zsh fmr={{{,}}}
