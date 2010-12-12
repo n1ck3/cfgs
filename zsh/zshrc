@@ -268,6 +268,10 @@
         sudo chown -R root:warez "$@"
     }
 # }}}
+# osx aliases {{{
+    alias shf='defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder'
+    alias hhf='defaults write com.apple.Finder AppleShowAllFiles NO && killall Finder'
+# }}}
 # Global aliases {{{
     alias -g G="| grep -i"
     alias -g M="| most"
@@ -297,8 +301,16 @@
     alias dshr='dsh && dr'
 # }}}
 # ssh {{{
+    alias rdt='ssh root@dt'
+    alias gdt='ssh dt'
+    alias rst='ssh root@st'
+    alias gst='ssh st'
+    alias vt='ssh vt'
+    alias rvt='ssh root@vt'
+    alias gvt='ssh git@vt'
     alias rpp='ssh root@pepper'
     alias gpp='ssh git@pepper'
+    alias tfb='ssh -N d56 -L 10000/192.168.112.1/443'
 # }}}
 # Terminal multiplexing {{{
     if which screen &> /dev/null ; then

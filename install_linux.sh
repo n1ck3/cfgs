@@ -39,6 +39,8 @@ _ins "$FILES_LOC/zsh/zshrc" "$HOME/.zshrc"
 # Create directories that these configs assume exists
 mkdir -p $HOME/.cache/vim/{backup,tmp} $HOME/.logs $HOME/.local/{bin,share} &> /dev/null
 
+sed -i 's/\~\/dev\/django\/django-mancx/\/srv\/dev/g' $HOME/cfgs/zsh/zshrc
+
 echo
 echo "Done."
 echo "Existing config files were backuped into $BACKUP_LOC"
