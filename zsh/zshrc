@@ -12,6 +12,17 @@
     zle -N self-insert url-quote-magic
 # }}}
 # Variables {{{
+    # Set OS
+    HOMEPATH=(${(s:/:)HOME})
+    HOMEPATH=$HOMEPATH[1]
+    if [ $HOMEPATH = "home" ] ; then
+        # This is a real unix box. ;)
+        BOX="linux"
+    else
+        # Catch all. Default to osx. :@
+        BOX="osx"
+    fi
+
     export HOMEBIN=~/.local/bin
     export PATH=/usr/local/mysql/bin/:$PATH
     export PATH=/opt/local/bin:/opt/local/sbin:$PATH
@@ -34,7 +45,7 @@
     export HASTMUX=$(if which tmux &> /dev/null ; then echo true ; else echo false ; fi)
     export PMODE=2
 
-    if [ $TERM = "linux" ]; then
+    if [ $TERM = "linux" ] ; then
         export PMODE=1 # Console
     elif [ $TERM = "xterm" ] && false ; then
         export PMODE=0 # Mobile connection
@@ -63,6 +74,7 @@
     compinit
 
     # allow approximate matching
+    zstyle ':completion:*' special-dirs true
     zstyle ':completion:*' completer _complete _match _approximate
     zstyle ':completion:*:match:*' original only
     zstyle ':completion:*:approximate:*' max-errors 1 numeric
@@ -85,40 +97,7 @@
 
 # }}}
 
-# cope {{{
-    cope="/usr/share/perl5/site_perl/5.10.1/auto/share/dist/Cope"
-
-    if [ -d $cope ] ; then
-        ls="$cope/ls"
-        for i in `ls $cope`; do
-            if which $i &> /dev/null ; then
-                alias $i="$cope/$i"
-            fi
-        done
-    else
-        ls='ls'
-    fi
-# }}}
-# Shortening {{{
-    alias grep='grep --color=auto'
-    alias vim='vim -p'
-    alias t='todo'
-    alias tt='todo +children'
-    alias dm='dmesg'
-    alias fm='fetchmail'
-    alias py='python'
-    alias pl='perl'
-    alias am='alsamixer'
-    alias xm='setxkbmap se && xset r rate 330 45 && xmodmap ~/.Xmodmap'
-    alias lock='vlock -n'
-    alias bell='echo -en "\007"'
-    alias rsync='time rsync'
-    alias cdm='cd ~/dev/django/django-mancx'
-    alias cda='cd ~/dev/django/auriga'
-    alias par='ssh root@pepper -t /etc/init.d/apache2 restart'
-    alias gur='gu && dr'
-# }}}
-# LOLCODE {{{
+# LOLCODE (for the lulz) {{{
     lolz()
     {
         lns=$(grep -n "lolzz" ~/.zshrc)
@@ -154,35 +133,94 @@
     alias kthxbai='halt'
     # END lolzz
 # }}}
+# Aliases {{{
+    ## Global aliases
+    #alias -g G="| grep -i"
+    #alias -g M="| most"
+    #alias -g X="| xargs"
+    #alias -g H="| head"
+    #alias -g T="| tail"
+    #alias -g S="| sort"
+    #alias -g SU='| sort -u'
+    #alias -g SN='| sort -n'
+    #alias -g SNR='| sort -nr'
+    #alias -g W="| wc -l"
+    #alias -g E="&| exit"
+    #alias -g N="&> /dev/null"
+    #alias -g 1N="1> /dev/null"
+    #alias -g 2N="2> /dev/null"
 
-# List most used commands {{{
-    lscmd() {
-        if [ -n "$1" ] ; then
-            c=$1
-        else
-            c=25
-        fi
+    ## Misc Aliases
+    alias bell='echo -en "\007"'
+    alias grep='grep --color=auto'
+    alias vim='vim -p'
+    alias py='python'
 
-        cat $LOGS/zsh.history.log |
-        perl -pe 's/^: [0-9]+:[0-9]+;\s*//' |
-        sort |
-        uniq -c |
-        sort -n -k1 |
-        tail -$c |
-        tac
-    }
 # }}}
-
-# Extendning {{{
-    cl() { cd $1 && ls }
-    cll() { cd $1 && ll }
-    clal() { cd $1 && lal }
-    psg() {
-        ps -ef | grep -i $1 | grep -Ev '(grep)' | grep -i $1
+# Django aliases {{{
+    dj() {
+        if ! [ -f ./settings_local.py ] ; then
+            echo
+            echo "You have to be in the right place to do this."
+            echo
+            return 1
+        fi
     }
+
+    alias dm='dj && python manage.py'
+    alias dr='dm runserver'
+    alias ds='echo "no" | dm syncdb'
+    alias dv='dm validate'
+    alias dss='dm shell'
+    alias gur='gu && dr'
+
+    # Dangerous Aliases
+    alias ddb="grep DB_NAME settings_local.py | grep -Eo \"'.+'\" | tr -d \"'\""
+    alias dsh='dj && for db in `mysql -s -s -e "show tables in $(ddb)"` ; do mysql -e "drop table $(ddb).$db" ; done && ds'
+    alias dshr='dsh && dr'
+
+    ## Box specifics
+    if [ $BOX = "linux" ] ; then
+        alias cdm='cd /srv/dev'
+        alias cda='cd /src/auriga'
+        alias ar='service apache2 restart'
+    elif [ $BOX = "osx" ] ; then
+        alias shf='defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder'
+        alias hhf='defaults write com.apple.Finder AppleShowAllFiles NO && killall Finder'
+        alias cdm='cd ~/dev/django/django-mancx'
+        alias cda='cd ~/dev/django/auriga'
+    fi
+# }}}
+# SSH Aliases {{{
+    # d56
+    alias d56='ssh d56'
+
+    # deepthought
+    alias rdt='ssh root@dt'
+    alias gdt='ssh dt'
+
+    # shallowthought
+    alias rst='ssh root@st'
+    alias gst='ssh st'
+
+    # virtualthought
+    alias vt='ssh vt'
+    alias rvt='ssh root@vt'
+    alias gvt='ssh git@vt'
+
+    # pepper
+    alias rpp='ssh root@pepper'
+    alias gpp='ssh git@pepper'
+
+    alias tfb='ssh -N d56 -L 10000/192.168.112.1/443'
 # }}}
 # ls and files {{{
-    ls="$ls -G"
+    if [ $BOX = "linux" ] ; then
+        ls="ls -G"
+    else
+        ls="ls"
+    fi
+
     alias ls="$ls"
     alias lc="$ls --color=never"
     alias ll="$ls -l"
@@ -242,7 +280,7 @@
         find 2>/dev/null | grep -is "$1"
     }
     fc() { # search content
-        if [ $# -eq 0 ]; then
+        if [ $# -eq 0 ] ; then
             echo "findcontent: No arguments entered."; return 1
         else
             # "{.[a-zA-Z],}*" instead of "." makes the output cleaner
@@ -255,74 +293,18 @@
     cdf () { # cd to where file is found
         cd "$(dirname "$(locate -i "$*" | head -n 1)")"
     }
-    grab() { # change mode and users of files to safe default
-        chmod -R u=rwX,go=rX "$@"
-        chown -R ${USER}:users "$@"
-    }
-    sgrab() {
-        sudo chmod -R u=rwX,go=rX "$@"
-        sudo chown -R ${USER}:users "$@"
-    }
-    wgrab() { # change mode and users of files to warez
-        sudo chmod -R 775 "$@"
-        sudo chown -R root:warez "$@"
-    }
-# }}}
-# osx aliases {{{
-    alias shf='defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder'
-    alias hhf='defaults write com.apple.Finder AppleShowAllFiles NO && killall Finder'
-# }}}
-# Global aliases {{{
-    alias -g G="| grep -i"
-    alias -g M="| most"
-    alias -g X="| xargs"
-    alias -g H="| head"
-    alias -g T="| tail"
-    alias -g S="| sort"
-    alias -g SU='| sort -u'
-    alias -g SN='| sort -n'
-    alias -g SNR='| sort -nr'
-    alias -g W="| wc -l"
-    alias -g E="&| exit"
-    alias -g N="&> /dev/null"
-    alias -g 1N="1> /dev/null"
-    alias -g 2N="2> /dev/null"
-# }}}
-# Django {{{
-    alias dm='python manage.py'
-    alias dr='dm runserver'
-    alias ds='echo "no" | dm syncdb'
-    alias dv='dm validate'
-    alias dss='dm shell'
-
-    # Dangerous Aliases
-    alias ddb="grep DB_NAME settings_local.py | grep -Eo \"'.+'\" | tr -d \"'\""
-    alias dsh='for db in `mysql -s -s -e "show tables in $(ddb)"`; do mysql -e "drop table $(ddb).$db"; done; ds'
-    alias dshr='dsh && dr'
-# }}}
-# ssh {{{
-    alias rdt='ssh root@dt'
-    alias gdt='ssh dt'
-    alias rst='ssh root@st'
-    alias gst='ssh st'
-    alias vt='ssh vt'
-    alias rvt='ssh root@vt'
-    alias gvt='ssh git@vt'
-    alias rpp='ssh root@pepper'
-    alias gpp='ssh git@pepper'
-    alias tfb='ssh -N d56 -L 10000/192.168.112.1/443'
-# }}}
-# Terminal multiplexing {{{
-    if which screen &> /dev/null ; then
-        alias sr='screen -r'
-        alias sw='screen -wipe'
-    fi
-
-    if which tmux &> /dev/null ; then
-        alias ta='tmux attach'
-        alias td='tmux detach'
-        alias tr='td && ta'
-    fi
+    #grab() { # change mode and users of files to safe default
+        #chmod -R u=rwX,go=rX "$@"
+        #chown -R ${USER}:users "$@"
+    #}
+    #sgrab() {
+        #sudo chmod -R u=rwX,go=rX "$@"
+        #sudo chown -R ${USER}:users "$@"
+    #}
+    #wgrab() { # change mode and users of files to warez
+        #sudo chmod -R 775 "$@"
+        #sudo chown -R root:warez "$@"
+    #}
 # }}}
 # Revision handling {{{
     if which svn &> /dev/null ; then
@@ -345,6 +327,7 @@
         alias gC='gc && gp'
         alias grh='git reset --hard'
 
+        # Git Stash
         alias gt='git stash'
         alias gtl='gt list'
         alias gts='gt save'
@@ -359,87 +342,30 @@
                 git config branch.master.merge refs/heads/master'
         alias gau='git update-index --assume-unchanged'
     fi
-
 # }}}
-# MPD {{{
-    if which mpd &> /dev/null ; then
-        export MPD_HOST=localhost
-        export MPD_PORT=6600
-
-        alias npc='mpc --format "%position%) %artist% #[%album%#] - %title%"' # Now playing
-        alias mps='npc toggle' # Stop
-        alias mpl='npc playlist'
-        alias mpg='mpcext -s'
-        alias mpag='mpcext -S' # grep all
-        alias mpa='mpc add'
-        alias mpx='mpc clear'
-        alias mpll='mpc load' # Playlist load
-        alias mpls='mpx && mpll' # Playlist switch
-        alias mpgs='mpcext -sw' # grep switch
-        alias mpp='npc play'
-        alias mpq='mpcext -q' # Queue
-        alias mpr='npc random'
-    fi
-# }}}
-# Mounting {{{
-    # USB, yeah
-    alias mmu='mount /mnt/usb'
-    alias muu='umount /mnt/usb'
-
-    # Warez
-    alias mmw='sshfs ninjaloot.se:/warez /mnt/warez -o allow_other'
-    alias muw='fusermount -u /mnt/warez'
-
-    # sshfs home
-    alias mmn='sshfs ninjaloot.se: ~/ssh/ninjaloot'
-    alias mun='fusermount -u ~/ssh/ninjaloot'
-
-    alias muu='sudo umount /mnt/usb'
-    alias muw='fusermount -u /mnt/warez'
-    alias mun='fusermount -u ~/ssh/ninjaloot'
-    alias muf='sudo umount -l /mnt/warez && sudo umount -l ~/ssh/ninjaloot'
-# }}}
-# Failsafe! :D {{{
-    fail() {
-        if which figlet &> /dev/null && [ $PMODE != 0 ]; then
-            # If figlet exists and we are not on a mobile connection, doit
-            figlet :@ && echo
-        else
-            # Print red angry text
-            echo -e "\n\033[1;31m   YOU'RE DOING IT WRONG! :@\033[0m\n"
-        fi
+# Extendning {{{
+    cl() { cd $1 && ls }
+    cll() { cd $1 && ll }
+    clal() { cd $1 && lal }
+    psg() {
+        ps -ef | grep -i $1 | grep -Ev '(grep)' | grep -i $1
     }
-
-    alias sl='fail && ls'
-    alias ös='fail && ls'
-    alias lös='fail && ls'
-    alias xs='fail && cd'
-    alias vf='fail && cd'
-    alias vom='fail && vim'
-    alias bim='fail && vim'
-    alias shitdown='fail && shutdown' # :D
 # }}}
+
 # Configuration and sourcing {{{
     # Easy editing. \o/
-    alias a='vim ~/.config/awesome/rc.lua'
     alias v="vim ~/.vimrc"
     alias z="vim ~/.zshrc"
 
-    # Alias to the hard paths of configs
     alias -g zrc='~/.zshrc'
 
     # Sourcing
-    alias aa='awesome -k'
     alias zz="source zrc"
 
     # The .config directory
-    alias cdc='cd ~/.config'
-    alias cdv='cd ~/.config/vim'
-    alias uc="cd ~/.config && git pull origin master && cd -" # Update config
-
-    # Project directories
-    alias cdr='cd ~/git/rls'
-    alias cdn='cd ~/git/ndev'
+    alias cdc='cd ~/cfgs'
+    alias cdv='cd ~/cfgs/vim'
+    alias uc="cd ~/cfgs && git pull origin master && cd -" # Update config
 
     # Also useful during configuration
     alias cc='grep -Ev "^\s*(#|$)"' # Print a file without comments
@@ -505,6 +431,7 @@
     alias p1='p 1'
     alias p2='p 2'
     alias p3='p 3'
+
     chpwd() {
         if which todo &> /dev/null ; then todo ; fi
     }
@@ -572,5 +499,25 @@
             3) ; PROMPT=$(print "$r1\n%B${vcs_info_msg_0_}%b\n$r2")
         esac
     }
+# }}}
+# Failsafe! :D {{{
+    fail() {
+        if which figlet &> /dev/null && [ $PMODE != 0 ] ; then
+            # If figlet exists and we are not on a mobile connection, doit
+            figlet :@ && echo
+        else
+            # Print red angry text
+            echo -e "\n\033[1;31m   YOU'RE DOING IT WRONG! :@\033[0m\n"
+        fi
+    }
+
+    alias sl='fail && ls'
+    alias ös='fail && ls'
+    alias lös='fail && ls'
+    alias xs='fail && cd'
+    alias vf='fail && cd'
+    alias vom='fail && vim'
+    alias bim='fail && vim'
+    alias shitdown='fail && shutdown' # :D
 # }}}
 # vim: ft=zsh fmr={{{,}}}
