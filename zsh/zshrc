@@ -12,10 +12,8 @@
     zle -N self-insert url-quote-magic
 # }}}
 # Variables {{{
-    # Set OS
-    HOMEPATH=(${(s:/:)HOME})
-    HOMEPATH=$HOMEPATH[1]
-    if [ $HOMEPATH = "home" ] ; then
+    # Set what kind of BOX we are on
+    if [ -d /root ] ; then
         # This is a real unix box. ;)
         BOX="linux"
     else
