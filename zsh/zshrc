@@ -182,11 +182,12 @@
         alias cdm='cd /srv/dev'
         alias cda='cd /src/auriga'
         alias ar='service apache2 restart'
+        alias tae='tail -f /var/log/apache2/error.log'
     elif [ $BOX = "osx" ] ; then
-        alias shf='defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder'
-        alias hhf='defaults write com.apple.Finder AppleShowAllFiles NO && killall Finder'
         alias cdm='cd ~/dev/django/django-mancx'
         alias cda='cd ~/dev/django/auriga'
+        alias shf='defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder'
+        alias hhf='defaults write com.apple.Finder AppleShowAllFiles NO && killall Finder'
     fi
 # }}}
 # SSH Aliases {{{
