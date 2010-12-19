@@ -4,11 +4,13 @@
 # Customized by n1ck3 (ad.hoc.nick@gmail.com) to work in osx as well as linux
 # WTFPL.
 
-# Make sure you are in the right place. :)
-cd
-FILES_LOC=$(dirname $0)
+# Setup variables
+FILES_LOC=$(cd `dirname $0` && pwd)
 BACKUP_LOC=$HOME/tmp/old_cfgs
 BACKED_UP="no"
+
+# Make sure you are in the right place. :)
+cd
 
 # Install method
 _ins() {
