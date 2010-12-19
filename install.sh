@@ -44,6 +44,10 @@ if [[ $(whoami) != "root" && -f $HOME/.zshrc ]] ; then
     chsh -s /bin/zsh
 fi
 
+# Install python autocomplete and history
+_ins "$FILES_LOC/python/pystartup.py" "$HOME/.pystartup"
+_ins "$FILES_LOC/python/pyhistory" "$HOME/.pyhistory"
+
 echo
 echo "Done."
 if [ -d $BACKUP_LOC ] ; then

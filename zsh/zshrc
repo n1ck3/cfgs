@@ -25,6 +25,7 @@
     export PATH=/usr/local/mysql/bin/:$PATH
     export PATH=/opt/local/bin:/opt/local/sbin:$PATH
     export MANPATH=/opt/local/share/man:$MANPATH
+    export PYTHONSTARTUP=$HOME/.pystartup
 
     # If $HOMEBIN is not in $PATH, add it, but only once.
     if ! [[ $PATH =~ "$HOMEBIN" ]] ; then
