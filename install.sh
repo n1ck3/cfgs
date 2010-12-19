@@ -8,6 +8,7 @@
 cd
 FILES_LOC=$(dirname $0)
 BACKUP_LOC=$HOME/tmp/old_cfgs
+BACKED_UP="no"
 
 # Install method
 _ins() {
@@ -18,12 +19,13 @@ _ins() {
         if [ -L $DEST ] ; then
             MSG="      - Reinstalling ${SRC}"
             unlink $DEST
-        elif [ -f $DEST ] || [ -d $DEST ] ; then
+        elif [ -f $DEST ] ; then
             if [ ! -d $BACKUP_LOC ] ; then
                 mkdir -p $BACKUP_LOC
             fi
             MSG="      - Reinstalling $SRC"
             mv $DEST $BACKUP_LOC
+            BACKED_UP="yes"
         fi
     else
         MSG="      - Installing ${SRC}"
@@ -48,15 +50,16 @@ touch "$HOME/.pyhistory"
 
 # Install zsh configs and change chell to zsh if
 # ~/.zshrc installed correclty and user is not root
-iecho "* Installing zsh configs"
+echo "* Installing zsh configs"
 _ins "$FILES_LOC/zsh/zshrc" "$HOME/.zshrc"
-if [[ $(whoami) != "root" && -f $HOME/.zshrc ]] ; then
+if [ $(whoami) != "root" ] && [ -L $HOME/.zshrc ] ; then
     chsh -s /bin/zsh
 fi
 
-if [ -d $BACKUP_LOC ] ; then
+if [ $BACKED_UP = "yes" ] ; then
     echo
     echo "Existing config files were backed up into $BACKUP_LOC"
 fi
+
 echo
 echo "Done!!1 \o/"

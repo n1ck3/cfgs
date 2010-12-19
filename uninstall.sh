@@ -25,4 +25,3 @@ chsh -s /bin/bash
 
 echo
 echo "Done!!1 \o/"
-
