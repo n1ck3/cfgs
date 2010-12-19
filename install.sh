@@ -4,6 +4,7 @@
 # Customized by n1ck3 (ad.hoc.nick@gmail.com) to work in osx as well as linux
 # WTFPL.
 
+cd $HOME
 FILES_LOC=$(dirname $0)
 BACKUP_LOC=$HOME/tmp/old_cfgs
 
