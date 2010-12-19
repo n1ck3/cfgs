@@ -41,19 +41,18 @@ _ins "$FILES_LOC/vim" "$HOME/.vim"
 # Create directories that these configs assume exists
 mkdir -p $HOME/.cache/vim/{backup,tmp} $HOME/.logs $HOME/.local/{bin,share} &> /dev/null
 
-# Install zsh configs and change chell to zsh if
-# ~/.zshrc installed correclty and user is not root
-echo "* Installing zsh configs"
-_ins "$FILES_LOC/zsh/zshrc" "$HOME/.zshrc"
-if [[ $(whoami) != "root" && -f $HOME/.zshrc ]] ; then
-    chsh -s /bin/zsh
-fi
-
 # Install python autocomplete and history
 echo "* Installing ppython configs"
 _ins "$FILES_LOC/python/pystartup.py" "$HOME/.pystartup"
 _ins "$FILES_LOC/python/pyhistory" "$HOME/.pyhistory"
 
+# Install zsh configs and change chell to zsh if
+# ~/.zshrc installed correclty and user is not root
+iecho "* Installing zsh configs"
+_ins "$FILES_LOC/zsh/zshrc" "$HOME/.zshrc"
+if [[ $(whoami) != "root" && -f $HOME/.zshrc ]] ; then
+    chsh -s /bin/zsh
+fi
 
 if [ -d $BACKUP_LOC ] ; then
     echo

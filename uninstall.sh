@@ -3,7 +3,7 @@
 # Make sure you are in the right place. :)
 cd
 LINKS=( ".pyhistory" ".pystartup" ".vim" ".vimrc" ".zshrc" )
-DIRS=( ".cache/vim" ".local/bin" ".local/share" ".logs" "tmp/old_cfgs" )
+DIRS=( ".cache/vim" ".local/bin" ".local/share" ".logs" )
 
 echo "* Removing softlinks"
 for i in ${LINKS[@]} ; do
