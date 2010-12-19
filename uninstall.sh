@@ -2,8 +2,8 @@
 
 # Make sure you are in the right place. :)
 cd
-LINKS=( ".pyhistory" ".pystartup" ".vim" ".vimrc" ".zshrc" )
-DIRS=( ".cache/vim" ".local/bin" ".local/share" ".logs" )
+LINKS=( ".pystartup" ".vim" ".vimrc" ".zshrc" )
+FILES=( ".cache/vim" ".local/bin" ".local/share" ".pyhistory" ".logs" )
 
 echo "* Removing softlinks"
 for i in ${LINKS[@]} ; do
@@ -13,9 +13,9 @@ for i in ${LINKS[@]} ; do
     fi
 done
 
-echo "* Removing directories"
+echo "* Removing files"
 for i in ${DIRS[@]} ; do
-    if [ -d $i ] ; then
+    if [ -d $i ] || [ -f $i ] ; then
         echo "      - Removing: $i"
         rm -rf $i
     fi

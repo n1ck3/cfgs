@@ -14,7 +14,7 @@ _ins() {
     SRC=$1
     DEST=$2
     if [ -L $DEST ] || [ -f $DEST ] || [ -d $DEST ] ; then
-		# Already there? Deal with it.
+        # Already there? Deal with it.
         if [ -L $DEST ] ; then
             MSG="      - Reinstalling ${SRC}"
             unlink $DEST
@@ -44,7 +44,7 @@ mkdir -p $HOME/.cache/vim/{backup,tmp} $HOME/.logs $HOME/.local/{bin,share} &> /
 # Install python autocomplete and history
 echo "* Installing ppython configs"
 _ins "$FILES_LOC/python/pystartup.py" "$HOME/.pystartup"
-_ins "$FILES_LOC/python/pyhistory" "$HOME/.pyhistory"
+touch "$HOME/.pyhistory"
 
 # Install zsh configs and change chell to zsh if
 # ~/.zshrc installed correclty and user is not root
