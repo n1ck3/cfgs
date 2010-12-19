@@ -35,7 +35,7 @@ _ins() {
 
 # Install vim configs and create directories that
 # these configs assume exits
-echo " * Installing vim configs"
+echo "* Installing vim configs"
 _ins "$FILES_LOC/vim/vimrc" "$HOME/.vimrc"
 _ins "$FILES_LOC/vim" "$HOME/.vim"
 # Create directories that these configs assume exists
