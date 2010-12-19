@@ -5,25 +5,24 @@ cd
 LINKS=( ".pyhistory" ".pystartup" ".vim" ".vimrc" ".zshrc" )
 DIRS=( ".cache/vim" ".local/bin" ".local/share" ".logs" "tmp/old_cfgs" )
 
+echo "* Removing softlinks"
 for i in ${LINKS[@]} ; do
-	if [ -f $i ] ; then
-		echo "Unlinking: $i"
-		unlink $i
-	else
-		echo "No such link found: $i"
-	fi
+    if [ -L $i ] ; then
+        echo "      - Unlinking: $i"
+        unlink $i
+    fi
 done
 
+echo "* Removing directories"
 for i in ${DIRS[@]} ; do
-	if [ -d $i ] ; then
-		echo "deleting directory: $i"
-		rm -rf $i
-	else
-		echo "No such directory found: $i"
-	fi
+    if [ -d $i ] ; then
+        echo "      - Removing: $i"
+        rm -rf $i
+    fi
 done
 
 chsh -s /bin/bash
 
 echo
-echo "Done! \o/"
+echo "Done!!1 \o/"
+
