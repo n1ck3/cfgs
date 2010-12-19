@@ -4,10 +4,12 @@
 # Customized by n1ck3 (ad.hoc.nick@gmail.com) to work in osx as well as linux
 # WTFPL.
 
-cd $HOME
+# Make sure you are in the right place. :)
+cd
 FILES_LOC=$(dirname $0)
 BACKUP_LOC=$HOME/tmp/old_cfgs
 
+# Install mathod
 _ins() {
     SRC=$1
     DEST=$2
@@ -25,16 +27,10 @@ _ins() {
     fi
 }
 
-dirs[0]='vim'
-dirs[1]='zsh'
-
-for i in ${dirs[@]} ; do
-    _ins "$FILES_LOC/${dirs[$i]}" "$HOME/.${dirs[$i]}"
-done
-
 # Install vim configs and create directories that
 # these configs assume exits
 _ins "$FILES_LOC/vim/vimrc" "$HOME/.vimrc"
+_ins "$FILES_LOC/vim" "$HOME/.vim"
 # Create directories that these configs assume exists
 mkdir -p $HOME/.cache/vim/{backup,tmp} $HOME/.logs $HOME/.local/{bin,share} &> /dev/null
 
