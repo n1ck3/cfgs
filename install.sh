@@ -54,7 +54,7 @@ touch "$HOME/.pyhistory"
 # ~/.zshrc installed correclty and user is not root
 echo "* Installing zsh configs"
 _ins "$FILES_LOC/zsh/zshrc" "$HOME/.zshrc"
-if [ $(whoami) != "root" ] && [ -L $HOME/.zshrc ] ; then
+if [ $(whoami) != "root" ] && [ $(whoami) != "git" ] && [ -L $HOME/.zshrc ] ; then
     chsh -s /bin/zsh
 fi
 

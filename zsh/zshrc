@@ -25,7 +25,8 @@
     export PATH=/usr/local/mysql/bin/:$PATH
     export PATH=/opt/local/bin:/opt/local/sbin:$PATH
     export MANPATH=/opt/local/share/man:$MANPATH
-    export PYTHONSTARTUP=$HOME/.pystartup
+    #export PYTHONSTARTUP=$HOME/.pystartup
+    export PYTHONSTARTUP=$HOME/.bpystartup
 
     # If $HOMEBIN is not in $PATH, add it, but only once.
     if ! [[ $PATH =~ "$HOMEBIN" ]] ; then
@@ -154,6 +155,7 @@
     alias grep='grep --color=auto'
     alias vim='vim -p'
     alias py='python'
+    alias bpy='bpython'
 
 # }}}
 # Django aliases {{{
@@ -172,7 +174,9 @@
     alias dr='dm runserver'
     alias ds='dj && dsyncdb'
     alias dv='dm validate'
-    alias dss='dm shell'
+    alias dmp='dm dumpdata'
+    #alias dss='dm shell'
+    alias dss='dj && bpy'
     alias gur='gu && dr'
 
     # Dangerous Aliases
