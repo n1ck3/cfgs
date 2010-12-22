@@ -14,7 +14,7 @@ for i in ${LINKS[@]} ; do
 done
 
 echo "* Removing files"
-for i in ${DIRS[@]} ; do
+for i in ${FILES[@]} ; do
     if [ -d $i ] || [ -f $i ] ; then
         echo "      - Removing: $i"
         rm -rf $i
