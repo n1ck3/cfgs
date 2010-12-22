@@ -1,17 +1,38 @@
 # Add auto-completion and a stored history file of commands to your Python
-# interactive interpreter. 
+# interactive interpreter.
 #
-# Requires: Python 2.0+, readline. 
+# Requires: Python 2.0+, readline.
 #
 # Store the file as ~/.pystartup, and set an environment variable to point
 # to it:  "export PYTHONSTARTUP=$HOME/.pystartup" in your shell.
 #
-# Note that PYTHONSTARTUP does *not* expand "~" -nub-, so you have to put in 
+# Note that PYTHONSTARTUP does *not* expand "~" -nub-, so you have to put in
 # the full path to your home directory.
 
 import atexit
 import os.path
 
+# Load Django modules
+try:
+    from django.core.management import setup_environ
+    import settings
+    setup_environ(settings)
+    print 'imported django settings'
+    try:
+        exec_strs = ["from %s.models import *" % apps for apps in settings.INSTALLED_APPS]
+        for x in exec_strs:
+            try:
+                exec(x)
+            except:
+                print 'Not imported for %s' % x
+        print 'imported django models'
+    except:
+        pass
+except:
+    pass
+
+
+# Auto Complete
 try:
     import readline
 except ImportError:
