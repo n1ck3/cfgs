@@ -46,7 +46,7 @@ _ins "$FILES_LOC/vim" "$HOME/.vim"
 mkdir -p $HOME/.cache/vim/{backup,tmp} $HOME/.logs $HOME/.local/{bin,share} &> /dev/null
 
 # Install python autocomplete and history
-if [ $(which bpydthon) ] ; then 
+if [ $(which bpython) ] ; then
 	echo "* Installing bpython configs"
 	_ins "$FILES_LOC/python/bpystartup.py" "$HOME/.pystartup"
 else
