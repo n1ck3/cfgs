@@ -179,6 +179,23 @@
     alias dss='dj && bpy'
     alias gur='gu && dr'
 
+	# Mounting sshfs
+	if [ $BOX = "osx" ] ; then
+		# git@virtualthought
+		alias mvtg='sshfs git@vt:/srv/dev/ $HOME/dev/django/vtg -oauto_cache,reconnect,volname=vtg'
+		alias umvtg='umount $HOME/dev/django/vtg'
+		alias cdvtg='cd $HOME/dev/django/vtg'
+
+		# root@virtualthought
+		alias mvtr='sshfs root@vt:/ $HOME/dev/django/vtr -oauto_cache,reconnect,volname=vtr'
+		alias umvtr='umount $HOME/dev/django/vtr'
+		alias cdvtr='cd $HOME/dev/django/vtr'
+		
+		# Do both
+		alias mvta='mvtg && mvtr'
+		alias umvta='umvtg && umvtr'
+	fi
+
     # Dangerous Aliases
     alias ddb="grep DB_NAME settings_local.py | grep -Eo \"'.+'\" | tr -d \"'\""
     alias dsh='dj && for db in `mysql -s -s -e "show tables in $(ddb)"` ; do mysql -e "drop table $(ddb).$db" ; done && ds'
