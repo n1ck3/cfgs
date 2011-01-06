@@ -160,7 +160,7 @@
 # }}}
 # Django aliases {{{
     dj() {
-        if ! [ -f ./settings_local.py ] ; then
+        if ! [ -f ./settings.py ] ; then
             echo
             echo "You have to be in the right place to do this."
             echo
@@ -179,26 +179,37 @@
     alias dss='dj && bpy'
     alias gur='gu && dr'
 
-	# Mounting sshfs
-	if [ $BOX = "osx" ] ; then
-		# git@virtualthought
-		alias mvtg='sshfs git@vt:/srv/dev/ $HOME/dev/django/vtg -oauto_cache,reconnect,volname=vtg'
-		alias umvtg='umount $HOME/dev/django/vtg'
-		alias cdvtg='cd $HOME/dev/django/vtg'
+    # Mounting sshfs
+    if [ $BOX = "osx" ] ; then
+        # git@virtualthought
+        alias mvtg='sshfs git@vt:/srv/dev/ $HOME/dev/django/vtg -oauto_cache,reconnect,volname=vtg'
+        alias umvtg='umount $HOME/dev/django/vtg'
+        alias cdvtg='cd $HOME/dev/django/vtg'
 
-		# root@virtualthought
-		alias mvtr='sshfs root@vt:/ $HOME/dev/django/vtr -oauto_cache,reconnect,volname=vtr'
-		alias umvtr='umount $HOME/dev/django/vtr'
-		alias cdvtr='cd $HOME/dev/django/vtr'
-		
-		# Do both
-		alias mvta='mvtg && mvtr'
-		alias umvta='umvtg && umvtr'
-	fi
+        # root@virtualthought
+        alias mvtr='sshfs root@vt:/ $HOME/dev/django/vtr -oauto_cache,reconnect,volname=vtr'
+        alias umvtr='umount $HOME/dev/django/vtr'
+        alias cdvtr='cd $HOME/dev/django/vtr'
+
+        # Do both
+        alias mvta='mvtg && mvtr'
+        alias umvta='umvtg && umvtr'
+    fi
 
     # Dangerous Aliases
-    alias ddb="grep DB_NAME settings_local.py | grep -Eo \"'.+'\" | tr -d \"'\""
-    alias dsh='dj && for db in `mysql -s -s -e "show tables in $(ddb)"` ; do mysql -e "drop table $(ddb).$db" ; done && ds'
+    dsh() {
+        if ! dj ; then
+            return 1
+        fi
+        if [ -z  "$1" ] ; then
+            nuke_db="dev_main"
+        else
+            nuke_db="$1"
+        fi
+        mysql -e "DROP DATABASE $nuke_db;"
+        mysql -e "CREATE DATABASE $nuke_db COLLATE=utf8_general_ci"
+        ds
+    }
     alias dshr='dsh && dr'
 
     ## Box specifics
@@ -207,6 +218,10 @@
         alias cda='cd /src/auriga'
         alias ar='service apache2 restart'
         alias tae='tail -f /var/log/apache2/error.log'
+        alias taa='tail -f /var/log/apache2/access.log'
+        alias tna='tail -f /var/log/nginx/access.log'
+        alias tne='tail -f /var/log/nginx/error.log'
+        alias tee='tail -f /var/log/ejabberd/ejabberd.log'
     elif [ $BOX = "osx" ] ; then
         alias cdm='cd ~/dev/django/django-mancx'
         alias cda='cd ~/dev/django/auriga'
@@ -236,6 +251,27 @@
     alias gpp='ssh git@pepper'
 
     alias tfb='ssh -N d56 -L 10000/192.168.112.1/443'
+# }}}
+# Misc {{{
+    tg() {
+        ken_grep=$(ssh d56 'ls -R1 /media/storage/downloads')
+        roy_grep=$(ssh d56 'ssh roy "ls -R1 /Volumes/Video/{_Downloads,_Process,Documentaries,Movies,Sports,TV-Shows,Video}"')
+
+        temp="${ken_grep}\n${roy_grep}"
+        for term in $* ; do
+            old_temp=$temp
+            temp=$(echo $old_temp | grep -i $term)
+        done
+
+        for x in $* ; do
+            if [ -z "$str" ] ; then
+                str="$x"
+            else
+                str+="|$x"
+            fi
+        done
+        echo $temp | grep -Ei "($x)"
+    }
 # }}}
 # ls and files {{{
     if [ $BOX = "linux" ] ; then
@@ -364,6 +400,17 @@
         alias gm='git config branch.master.remote origin &&
                 git config branch.master.merge refs/heads/master'
         alias gau='git update-index --assume-unchanged'
+
+        # Setup remote for a branch
+        gbr() {
+            if [ -n "$1" ] ; then
+                git config branch.$1.remote origin
+                git config branch.$1.merge refs/heads/$1
+            else
+                echo "Tell me a branch, fool."
+            fi
+        }
+
     fi
 # }}}
 # Extendning {{{
