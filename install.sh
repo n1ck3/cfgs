@@ -63,6 +63,9 @@ if [ $(whoami) != "root" ] && [ $(whoami) != "git" ] && [ -L $HOME/.zshrc ] ; th
     chsh -s /bin/zsh
 fi
 
+# Install .gitconfig
+_ins "$FILES_LOC/git/gitconfig" "$HOME/.gitconfig"
+
 if [ $BACKED_UP = "yes" ] ; then
     echo
     echo "Existing config files were backed up into $BACKUP_LOC"

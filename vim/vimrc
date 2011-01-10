@@ -55,7 +55,8 @@
     set shiftwidth=4 " unify
     set tabstop=4 " real tabs should be 4, but they will show with set list on
     set copyindent " follow the conventions laid before us
-    set noexpandtab " do not use spaces
+    set expandtab " do not use spaces
+    let g:pyindent_open_paren = &sw
     filetype plugin indent on " load filetype plugins and indent settings
 " }
 " Text Formatting/Layout {
@@ -140,7 +141,15 @@
             echo "WhiteSpace is spaces"
         endif
     endfunction
-
+    function! PasteToggle()
+        if &paste == 0
+            set paste
+            echo 'Paste enabled'
+        else
+            set nopaste
+            echo 'Paste disabled'
+        endif
+    endfunction
     function! RemoveTrailingWhiteSpace()
         try
             :%s/\s\+$//
@@ -161,6 +170,7 @@
     nmap ,w :call WrapToggle()<cr>
     nmap ,s :call ScrolloffToggle()<cr>
     nmap ,cs :call ColorschemeToggle()<cr>
+    nmap ,p :call PasteToggle()<cr>
 
     nmap gyd ?def <cr>/):$<cr>o""""""<cr><esc>k2la
 
@@ -205,6 +215,12 @@
     "inoremap <Left> <NOP>
     "inoremap <Right> <NOP>
 
+    "map <C-j> <Up>
+    "map <C-k> <Down>
+
+    "  Undo Annoyance"
+    nmap <C-u> <C-r>
+
     "  Misc Stuffz"
     nmap <space> /
     nmap ,<space> /\('.\{-}'\\|".\{-}"\)<cr>
@@ -215,5 +231,7 @@
     nmap <C-j> <C-w>j
     nmap <C-k> <C-w>k
     nmap <C-l> <C-w>l
+    nmap <C-w><C-h> <C-w>H
+    nmap <C-w><C-l> <C-w>L
 " }
 "vim: sw=4

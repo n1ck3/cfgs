@@ -1,6 +1,7 @@
 # n1kc3's zshrc
 
 # Loading and setting {{{
+    set convert-meta on
     setopt extendedglob
     umask 022
     bindkey -e
@@ -159,6 +160,7 @@
 
 # }}}
 # Django aliases {{{
+    alias psp="python -c \"from distutils.sysconfig import get_python_lib; print get_python_lib()\""
     dj() {
         if ! [ -f ./settings.py ] ; then
             echo
@@ -211,6 +213,7 @@
         ds
     }
     alias dshr='dsh && dr'
+    alias dshrv='dsh && dr 0.0.0.0:9000'
 
     ## Box specifics
     if [ $BOX = "linux" ] ; then
@@ -251,27 +254,6 @@
     alias gpp='ssh git@pepper'
 
     alias tfb='ssh -N d56 -L 10000/192.168.112.1/443'
-# }}}
-# Misc {{{
-    tg() {
-        ken_grep=$(ssh d56 'ls -R1 /media/storage/downloads')
-        roy_grep=$(ssh d56 'ssh roy "ls -R1 /Volumes/Video/{_Downloads,_Process,Documentaries,Movies,Sports,TV-Shows,Video}"')
-
-        temp="${ken_grep}\n${roy_grep}"
-        for term in $* ; do
-            old_temp=$temp
-            temp=$(echo $old_temp | grep -i $term)
-        done
-
-        for x in $* ; do
-            if [ -z "$str" ] ; then
-                str="$x"
-            else
-                str+="|$x"
-            fi
-        done
-        echo $temp | grep -Ei "($x)"
-    }
 # }}}
 # ls and files {{{
     if [ $BOX = "linux" ] ; then
@@ -419,6 +401,30 @@
     clal() { cd $1 && lal }
     psg() {
         ps -ef | grep -i $1 | grep -Ev '(grep)' | grep -i $1
+    }
+# }}}
+# Misc {{{
+    tg() {
+        echo "  Grabbing content from ken"
+        ken_grep=$(ssh d56 'ls -R1 /media/storage/downloads')
+        echo "  Grabbing content from roy"
+        roy_grep=$(ssh d56 'ssh roy "ls -R1 /Volumes/Video/{_Downloads,_Process,Documentaries,Movies,Sports,TV-Shows,Video}"')
+
+        temp="${ken_grep}\n${roy_grep}"
+        for term in $* ; do
+            old_temp=$temp
+            temp=$(echo $old_temp | grep -i $term)
+        done
+
+        str=""
+        for x in $* ; do
+            if [ -z "$str" ] ; then
+                str="$x"
+            else
+                str+="|$x"
+            fi
+        done
+        echo $temp | grep -Ei "$str"
     }
 # }}}
 

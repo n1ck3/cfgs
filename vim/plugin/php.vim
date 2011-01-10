@@ -71,8 +71,8 @@ nmap gplg oif(in_array("",<esc>gpluGa))<cr>{<cr><++><cr>}<esc>3k2f"i
 
 nmap gpt mt:%s/    /\t<cr>`t
 
-nmap ,p :source ~/.vim/plugin/php.vim<cr>
-nmap ,P :sp ~/.vim/plugin/php.vim<cr>
+"nmap ,p :source ~/.vim/plugin/php.vim<cr>
+"nmap ,P :sp ~/.vim/plugin/php.vim<cr>
 nmap ,s :!php -l %<cr>
 
 " Notes
