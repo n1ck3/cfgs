@@ -367,6 +367,7 @@
         alias ga='git add'
         alias gC='gc && gp'
         alias grh='git reset --hard'
+        alias gls='git ls-files --unmerged'
 
         # Git Stash
         alias gt='git stash'
@@ -376,7 +377,7 @@
         alias gtp='gt pop'
         alias gtb='gt branch'
         alias gth='gt show'
-        alias gic=t'gt clear'
+        alias gic='gt clear'
 
         # Setup default master options
         alias gm='git config branch.master.remote origin &&
