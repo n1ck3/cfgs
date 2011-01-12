@@ -173,7 +173,8 @@
         echo "no" | python manage.py syncdb
     }
     alias dm='dj && python manage.py'
-    alias dr='dm runserver'
+    alias drvt='dm runserver'
+    alias dr='dr 0.0.0.0:9000'
     alias ds='dj && dsyncdb'
     alias dv='dm validate'
     alias dmp='dm dumpdata'
@@ -213,7 +214,7 @@
         ds
     }
     alias dshr='dsh && dr'
-    alias dshrv='dsh && dr 0.0.0.0:9000'
+    alias dshrv='dsh && drvt'
 
     ## Box specifics
     if [ $BOX = "linux" ] ; then
@@ -362,8 +363,8 @@
         alias gu='git pull' # git update...-ish.
         alias gU='gu && git submodule update'
         alias gs='git status'
-        alias gl='git log'
-        alias gll='gl --pretty=oneline'
+        alias gll='git log --decorate --stat'
+        alias gl='git log --pretty=oneline --abbrev-commit'
         alias ga='git add'
         alias gC='gc && gp'
         alias grh='git reset --hard'
