@@ -173,8 +173,8 @@
         echo "no" | python manage.py syncdb
     }
     alias dm='dj && python manage.py'
-    alias drvt='dm runserver'
-    alias dr='dr 0.0.0.0:9000'
+    alias dr='dm runserver'
+    alias drvt='dr 0.0.0.0:9000'
     alias ds='dj && dsyncdb'
     alias dv='dm validate'
     alias dmp='dm dumpdata'
@@ -227,6 +227,7 @@
         alias tne='tail -f /var/log/nginx/error.log'
         alias tee='tail -f /var/log/ejabberd/ejabberd.log'
     elif [ $BOX = "osx" ] ; then
+        alias cdd='cd ~/dev/django'
         alias cdm='cd ~/dev/django/django-mancx'
         alias cda='cd ~/dev/django/auriga'
         alias shf='defaults write com.apple.Finder AppleShowAllFiles YES && killall Finder'
