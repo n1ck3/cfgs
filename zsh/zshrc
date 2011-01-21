@@ -498,11 +498,12 @@
     zstyle ':vcs_info:(svn):*' branchformat '%b'
 
     p() {
-        if [[ $1 =~ "true" ]] || [[ $1 =~ "false" ]] ; then
-            export PKEEP=$1
+        if [[ $1 = "3" ]] ; then
+            export PKEEP=false
         else
-            export PMODE=$1
+            export PKEEP=true
         fi
+        export PMODE=$1
     }
     alias pt='p true'
     alias pf='p false'
