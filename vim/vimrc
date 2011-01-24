@@ -198,6 +198,9 @@
     nmap ,bl oborder: 1px solid lime;
     nmap ,br oborder: 1px solid red;
 
+    "  break xml indent"
+    nmap ,f :%s/>/>\r/<cr>:%s/</\r</<cr>gg=G:g/^$/d<cr>
+
     " Javascript stuffzz"
     nmap ,js o<script type="text/javascript"><cr><++><cr></script><esc>k<C-j>
 
