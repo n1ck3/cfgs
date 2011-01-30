@@ -224,5 +224,9 @@
     nmap <C-j> <C-w>j
     nmap <C-k> <C-w>k
     nmap <C-l> <C-w>l
+
+    "  Folding"
+    nmap ,fm :set foldmethod=marker<cr>
+    nmap ,fi :set foldmethod=indent<cr>
 " }
 "vim: sw=4
