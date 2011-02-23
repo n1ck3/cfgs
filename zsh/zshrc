@@ -251,7 +251,7 @@
 
     # deepthought
     alias rdt='ssh root@dt'
-    alias gdt='ssh dt'
+    alias dt='ssh dt'
 
     # shallowthought
     alias rst='ssh root@st'
