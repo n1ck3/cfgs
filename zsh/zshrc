@@ -189,7 +189,7 @@
     # Mounting sshfs
     if [ $BOX = "osx" ] ; then
         # git@virtualthought
-        alias mvtg='sshfs git@vt:/srv/dev/ $HOME/dev/django/vtg -oauto_cache,reconnect,volname=vtg'
+        alias mvtg='sshfs git@vt:/srv/live/ $HOME/dev/django/vtg -oauto_cache,reconnect,volname=vtg'
         alias umvtg='umount $HOME/dev/django/vtg'
         alias cdvtg='cd $HOME/dev/django/vtg'
 
@@ -222,7 +222,7 @@
 
     ## Box specifics
     if [ $BOX = "linux" ] ; then
-        alias cdm='cd /srv/dev'
+        alias cdm='cd /srv/live'
         alias cda='cd /src/auriga'
         alias ar='service apache2 restart'
         alias tae='tail -f /var/log/apache2/error.log'
