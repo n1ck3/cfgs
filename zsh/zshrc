@@ -224,11 +224,17 @@
     if [ $BOX = "linux" ] ; then
         alias cdm='cd /srv/live'
         alias cda='cd /src/auriga'
+
+        alias nr='service nginx restart'
+        alias tna='tail -f /var/log/nginx/access.log'
+        alias tne='tail -f /var/log/nginx/error.log'
+
         alias ar='service apache2 restart'
         alias tae='tail -f /var/log/apache2/error.log'
         alias taa='tail -f /var/log/apache2/access.log'
-        alias tna='tail -f /var/log/nginx/access.log'
-        alias tne='tail -f /var/log/nginx/error.log'
+
+        alias er='service ejaberd restart'
+        alias tem='tail -f /var/log/ejabberd/ejabberd_auth_bridge.log'
         alias tee='tail -f /var/log/ejabberd/ejabberd.log'
 
         # ejabberd ctl
