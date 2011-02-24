@@ -209,7 +209,7 @@
             return 1
         fi
         if [ -z  "$1" ] ; then
-            nuke_db="dev_main"
+            nuke_db="$(grep database .mancx.cnf | cut -f2 -d =)"
         else
             nuke_db="$1"
         fi
