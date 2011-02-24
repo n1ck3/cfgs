@@ -47,15 +47,15 @@ mkdir -p $HOME/.cache/vim/{backup,tmp} $HOME/.logs $HOME/.local/{bin,share} &> /
 
 # Install python autocomplete and history
 if [ $(which bpython) ] ; then
-	echo "* Installing bpython configs"
-	_ins "$FILES_LOC/python/bpystartup.py" "$HOME/.pystartup"
+    echo "* Installing bpython configs"
+    _ins "$FILES_LOC/python/bpystartup.py" "$HOME/.pystartup"
 else
-	echo "* Installing python configs"
-	_ins "$FILES_LOC/python/pystartup.py" "$HOME/.pystartup"
-	touch "$HOME/.pyhistory"
+    echo "* Installing python configs"
+    _ins "$FILES_LOC/python/pystartup.py" "$HOME/.pystartup"
+    touch "$HOME/.pyhistory"
 fi
 
-# Install zsh configs and change chell to zsh if
+# Install zsh configs and change shell to zsh if
 # ~/.zshrc installed correclty and user is not root
 echo "* Installing zsh configs"
 _ins "$FILES_LOC/zsh/zshrc" "$HOME/.zshrc"
@@ -70,6 +70,10 @@ if [ $BACKED_UP = "yes" ] ; then
     echo
     echo "Existing config files were backed up into $BACKUP_LOC"
 fi
+
+# Install tmux configs.
+echo "* Installing tmux configs"
+_ins "$FILES_LOC/tmux/tmux.conf" "$HOME/.tmux.conf"
 
 echo
 echo "Done!!1 \o/"
