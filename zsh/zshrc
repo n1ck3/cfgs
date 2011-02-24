@@ -393,7 +393,8 @@
         alias gic='gt clear'
 
         # Setup default master options
-        alias gm='git config branch.master.remote origin &&
+        alias gm='git merge'
+        alias gmb='git config branch.master.remote origin &&
                 git config branch.master.merge refs/heads/master'
         alias gau='git update-index --assume-unchanged'
 
