@@ -178,7 +178,7 @@
     }
     alias dm='dj && python manage.py'
     alias dr='dm runserver'
-    alias drvt='dr 0.0.0.0:9000'
+    alias drvt='dr 0.0.0.0:8081'
     alias ds='dj && dsyncdb'
     alias dv='dm validate'
     alias dmp='dm dumpdata'
@@ -233,16 +233,14 @@
         alias tae='tail -f /var/log/apache2/error.log'
         alias taa='tail -f /var/log/apache2/access.log'
 
-        alias er='service ejaberd restart'
-        alias tem='tail -f /var/log/ejabberd/ejabberd_auth_bridge.log'
-        alias tee='tail -f /var/log/ejabberd/ejabberd.log'
-
-        # ejabberd ctl
         alias ej='service ejabberd'
         alias ea='ej start'
         alias et='ej stop'
         alias er='ej restart'
         alias erl='er && tee'
+        alias tem='tail -f /var/log/ejabberd/ejabberd_auth_bridge.log'
+        alias tee='tail -f /var/log/ejabberd/ejabberd.log'
+
     elif [ $BOX = "osx" ] ; then
         alias cdd='cd ~/dev/django'
         alias cdm='cd ~/dev/django/django-mancx'
