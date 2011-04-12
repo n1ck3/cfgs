@@ -177,8 +177,7 @@
         echo "no" | python manage.py syncdb
     }
     alias dm='dj && python manage.py'
-    #alias dr='dm runserver'
-    alias dr='dr 0.0.0.0:8081'
+    alias dr='dm runserver 0.0.0.0:8081'
     alias ds='dj && dsyncdb'
     alias dv='dm validate'
     alias dmp='dm dumpdata'
