@@ -82,7 +82,7 @@
 " }
 " Colorschemes {
     let g:CSApprox_verbose_level = 0 " Silence for CSApprox. Otherwise prints warning in low color terminals
-    colorscheme desert
+    colorscheme zenburn
 " }
 " Custom functions {
     function! ScrolloffToggle()

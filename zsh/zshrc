@@ -177,30 +177,21 @@
         echo "no" | python manage.py syncdb
     }
     alias dm='dj && python manage.py'
-    alias dr='dm runserver'
-    alias drvt='dr 0.0.0.0:8081'
+    #alias dr='dm runserver'
+    alias dr='dr 0.0.0.0:8081'
     alias ds='dj && dsyncdb'
     alias dv='dm validate'
     alias dmp='dm dumpdata'
     #alias dss='dm shell'
-    alias dss='dj && bpy'
+    alias dms='dj && bpy'
     alias gur='gu && dr'
 
     # Mounting sshfs
     if [ $BOX = "osx" ] ; then
         # git@virtualthought
-        alias mvtg='sshfs git@vt:/srv/live/ $HOME/dev/django/vtg -oauto_cache,reconnect,volname=vtg'
-        alias umvtg='umount $HOME/dev/django/vtg'
-        alias cdvtg='cd $HOME/dev/django/vtg'
-
-        # root@virtualthought
-        alias mvtr='sshfs root@vt:/ $HOME/dev/django/vtr -oauto_cache,reconnect,volname=vtr'
-        alias umvtr='umount $HOME/dev/django/vtr'
-        alias cdvtr='cd $HOME/dev/django/vtr'
-
-        # Do both
-        alias mvta='mvtg && mvtr'
-        alias umvta='umvtg && umvtr'
+        alias mnt='sshfs git@nt.local:/srv/live/ $HOME/dev/django/nt -oauto_cache,reconnect,volname=nt'
+        alias umnt='umount $HOME/dev/django/nt'
+        alias cdnt='cd $HOME/dev/django/nt'
     fi
 
     # Dangerous Aliases
